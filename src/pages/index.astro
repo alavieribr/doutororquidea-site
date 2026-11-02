@@ -1,0 +1,463 @@
+---
+import Base from '../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { SITE, CORES, FUNDOS, TAG_COR } from '../data/site';
+
+const guias = (await getCollection('guias')).sort((a, b) => a.data.n - b.data.n);
+const slugByN = Object.fromEntries(guias.map((g) => [g.data.n, g.id]));
+const tituloByN = Object.fromEntries(guias.map((g) => [g.data.n, g.data.curto]));
+
+const diag = {
+  raiz: { label: 'Raiz', conds: [
+    ['Marrom, mole, a capa solta', 2, 'Tire do vaso hoje e corte tudo o que está podre.'],
+    ['Não sobrou nenhuma raiz viva', 1, 'Confira se o miolo está firme e monte a câmara de esfagno.'],
+    ['Prateada e seca, mas firme', 3, 'É sede de verdade: banho de imersão de 15 a 30 minutos.'],
+    ['Com tufos brancos de algodão', 8, 'Isole a planta e limpe com cotonete.'] ] },
+  folhas: { label: 'Folhas', conds: [
+    ['Moles e enrugadas', 3, 'Olhe a raiz antes de regar de novo.'],
+    ['Amarelas, só a de baixo', 4, 'Provavelmente é envelhecimento natural. Observe.'],
+    ['Manchas pretas e molhadas', 5, 'Isole e corte com margem de tecido sadio.'],
+    ['Manchas secas ou em mosaico', 7, 'Pode ser sol, bactéria ou vírus. Veja os sinais.'] ] },
+  miolo: { label: 'Miolo', conds: [
+    ['Preto ou mole', 6, 'Emergência: seque, pingue água oxigenada e incline a planta.'] ] },
+  flores: { label: 'Flores e botões', conds: [
+    ['Botões caem antes de abrir', 9, 'Deixe a planta quieta, longe de vento e ar-condicionado.'],
+    ['Não floresce há mais de um ano', 10, 'Mais luz indireta e adubo fraco toda semana.'],
+    ['A haste secou', 10, 'Corte rente à base e deixe a planta descansar.'] ] },
+  bichos: { label: 'Bichinhos', conds: [
+    ['Tufos brancos de algodão', 8, 'Cochonilha-farinhenta: isole e limpe.'],
+    ['Escudinhos marrons colados', 8, 'Cochonilha de escama: escova macia e persistência.'],
+    ['Trilhas de formigas', 8, 'Elas denunciam cochonilha. Procure nas axilas das folhas.'] ] },
+  vaso: { label: 'Vaso e substrato', conds: [
+    ['Cheiro de mofo ou fungo branco', 5, 'Troque todo o substrato hoje.'],
+    ['Substrato virando lama', 2, 'Troque o substrato e confira as raízes.'] ] },
+};
+const diagData = JSON.stringify({ diag, slugByN, tituloByN });
+
+const fatores = [
+  { n: 1, t: 'Luz', c: '#B86E00', bg: '#FFF1C2', x: 'Claridade sem sol direto. Janela com sol da manhã é a ideal. Folha verde-oliva é sinal de luz certa.' },
+  { n: 2, t: 'Água', c: '#1D5F8C', bg: '#E4F0FA', x: 'Espeto um palito de churrasco no vaso. Saiu seco, rego. Na dúvida, espero mais um dia. Nunca deixo água no prato.' },
+  { n: 3, t: 'Temperatura', c: '#C2410C', bg: '#FFE3D3', x: 'De 24 °C a 29 °C de dia, acima de 15 °C à noite. Longe do ar-condicionado.' },
+  { n: 4, t: 'Umidade', c: '#2E7D4F', bg: '#D8F0E2', x: 'Entre 40% e 80%. Uma bandeja com pedrisco e água embaixo do vaso ajuda, sem o fundo tocar a água.' },
+  { n: 5, t: 'Adubo', c: '#A3196B', bg: '#FDEBF4', x: 'Fraco e toda semana. Uma vez por mês, só água, para lavar o sal. Menos é mais.' },
+];
+const mitos = [
+  { claim: 'Três cubos de gelo por semana matam a orquídea.', v: 'Mito', vc: '#B91C3C', why: 'Num estudo de universidades americanas, Phalaenopsis regadas com gelo ficaram tão saudáveis quanto as outras.', src: 'HortScience, 2017', c: '#A3196B' },
+  { claim: 'Canela em pó ajuda a cicatrizar os cortes.', v: 'Prática aprovada', vc: '#1F6B40', why: 'Recomendada pelo Kew e por sociedades de orquidófilos. Ainda falta estudo controlado.', src: 'Kew', c: '#5B2C8F' },
+  { claim: 'Casca de banana é adubo milagroso.', v: 'Mito', vc: '#B91C3C', why: 'Não há milagre. O lugar da casca de banana é a compostagem.', src: 'UC Master Gardeners', c: '#2E7D4F' },
+  { claim: 'Borrifar as folhas todo dia faz bem.', v: 'Mais risco que benefício', vc: '#B45309', why: 'Dentro de casa, folha molhada aumenta o risco de fungo e bactéria.', src: 'Gardening Australia', c: '#1D5F8C' },
+];
+const pragas = [
+  { k: 'Praga', c: '#A3196B', n: 'Cochonilha-farinhenta', s: 'tufos brancos como algodão nas axilas e sob as folhas.', a: 'isolo, limpo com cotonete e aplico sabão inseticida ou óleo de neem.' },
+  { k: 'Praga', c: '#A3196B', n: 'Cochonilha de escama', s: 'escudinhos marrons ou brancos colados nas folhas.', a: 'raspo com escova macia e passo álcool isopropílico, repetindo a cada 10 a 16 dias.' },
+  { k: 'Praga', c: '#A3196B', n: 'Ácaros e tripes', s: 'folha prateada, pontilhada ou com teia fina.', a: 'sabão inseticida, três aplicações a cada 5 a 7 dias.' },
+  { k: 'Doença', c: '#5B2C8F', n: 'Podridão negra', s: 'manchas pretas e aquosas que avançam rápido.', a: 'isolo e corto com margem de tecido sadio. Fungicida, só com agrônomo.' },
+  { k: 'Doença', c: '#5B2C8F', n: 'Fusarium', s: 'anel roxo ou rosado no corte do rizoma.', a: 'removo todo o tecido roxo, esterilizando a tesoura a cada corte.' },
+  { k: 'Doença', c: '#5B2C8F', n: 'Vírus', s: 'mosaico, estrias ou anéis nas folhas e flores manchadas.', a: 'não tem cura. Isolo ou descarto, e esterilizo a tesoura com água sanitária.' },
+];
+const tipos = [
+  { n: 'Phalaenopsis', c: '#A3196B', img: 'phalaenopsis', x: 'A orquídea de supermercado. Luz média, sem sol direto. Não tem pseudobulbo: a folha é a caixa-d’água dela.' },
+  { n: 'Cattleya', c: '#7E0F52', img: 'cattleya', x: 'A rainha das orquídeas, com espécies nativas do Brasil. Gosta de mais luz e de secar entre as regas.' },
+  { n: 'Dendrobium', c: '#5B2C8F', img: 'dendrobium', x: 'Guarda água nos pseudobulbos. A de cana mole quer inverno fresco, seco e sem adubo.' },
+  { n: 'Oncidium', c: '#8A5A00', img: 'oncidium', x: 'A chuva-de-ouro, de cachos amarelos e pseudobulbos. Ficha completa em breve.' },
+  { n: 'Vanda', c: '#3F3AA0', img: 'vanda', x: 'Raízes soltas no ar. Uma delas, a Vanda Miss Joaquim, é a flor nacional de Singapura. Ficha completa em breve.' },
+  { n: 'Cymbidium', c: '#B4436C', img: 'cymbidium', x: 'A orquídea de Confúcio, símbolo de caráter na China há milênios. Ficha completa em breve.' },
+];
+const galeria = [
+  ['jardim-phalaenopsis-magenta', 'Phalaenopsis magenta no jardim do Arthur'], ['cattleya', 'Cattleya'], ['oncidium', 'Oncidium'], ['vanda', 'Vanda'],
+  ['jardim-phalaenopsis-rosa', 'Phalaenopsis rosa no jardim do Arthur'], ['dendrobium', 'Dendrobium'], ['cymbidium', 'Cymbidium'], ['phalaenopsis', 'Phalaenopsis'],
+];
+const historia = [
+  { w: 'Há 5 mil anos', l: 'China', x: 'Os chineses são os primeiros a registrar o uso das orquídeas, como plantas medicinais. A palavra lan aparece na fitoterapia chinesa desde então.' },
+  { w: '551–479 a.C.', l: 'Confúcio', x: 'O filósofo usa o Cymbidium como símbolo de quem mantém os princípios mesmo pobre e sem apoio.' },
+  { w: 'c. 300 a.C.', l: 'Teofrasto', x: 'O pai da botânica batiza a planta de orkhis, testículo em grego, pelo formato dos tubérculos.' },
+  { w: 'Década de 1520', l: 'A baunilha', x: 'Hernán Cortés leva à Europa a baunilha, a fava de orquídea que astecas e maias usavam para perfumar o chocolate.' },
+  { w: '1818', l: 'Cattleya labiata', x: 'Coletada no Nordeste brasileiro, floresce na Inglaterra em 1823 e acende a febre vitoriana das orquídeas.' },
+  { w: '1841', l: 'Edmond Albius', x: 'Aos 12 anos, um menino escravizado na Ilha da Reunião cria a polinização manual da baunilha, usada até hoje.' },
+  { w: '1862', l: 'Darwin', x: 'Ao ver uma orquídea com esporão de 45 cm, Darwin prevê uma mariposa de língua igualmente longa. Ela só é descoberta depois da morte dele.' },
+];
+const evBg = ['#FDEBF4', '#EEE6FA', '#FFF4D6', '#FFEBDD', '#E3F2E8', '#E4F0FA', '#FDEBF4'];
+const mundo = [
+  { p: 'Equador', c: '#B86E00', x: 'O campeão de orquídeas endêmicas: 1.707 espécies que só existem lá.' },
+  { p: 'Brasil', c: '#2E7D4F', x: 'O 2º lugar no mundo, com 1.540 espécies endêmicas.' },
+  { p: 'Madagascar', c: '#C2410C', x: 'Maior produtor de baunilha: cerca de 3 mil toneladas por ano. Lá vive também a orquídea de Darwin.' },
+  { p: 'Singapura', c: '#5B2C8F', x: 'A Vanda Miss Joaquim, criada em 1893, é a flor nacional desde 1981.' },
+  { p: 'Colômbia', c: '#A3196B', x: 'A Cattleya trianae é a flor nacional desde 1936.' },
+  { p: 'China', c: '#B91C3C', x: 'Celebra o Cymbidium há milênios, na arte, na filosofia e no cultivo.' },
+];
+const petalas = [
+  ['48%', '#F4A7CB', 24, 0], ['64%', '#F2C14E', 18, 3], ['80%', '#B79AE8', 26, 6], ['92%', '#FFFFFF', 16, 9], ['30%', '#F4A7CB', 20, 11],
+];
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org', '@type': 'WebSite', name: SITE.nome, url: SITE.url, inLanguage: 'pt-BR',
+  author: { '@type': 'Person', name: 'Arthur Lavieri', sameAs: [SITE.facebook] },
+});
+---
+<Base title={SITE.nome}>
+  <script slot="head" type="application/ld+json" set:html={jsonLd} />
+
+  <!-- ABERTURA -->
+  <section class="hero" id="inicio">
+    {petalas.map(([left, cor, w, d]) => (
+      <svg aria-hidden="true" class="petal" width={w} height={Math.round(Number(w) * 0.62)} viewBox="0 0 22 14" style={`left:${left};animation-delay:${d}s`}><ellipse cx="11" cy="7" rx="10" ry="6" fill={cor} /></svg>
+    ))}
+    <div class="wrap hero-in">
+      <div class="hero-txt">
+        <p class="pill">Arthur Lavieri, o Doutor Orquídea</p>
+        <h1>Ninguém me ensinou a salvar orquídeas. <em>Elas me ensinaram.</em></h1>
+        <p class="sub">Sou Arthur Lavieri, santista por opção e autodidata. Há mais de 10 anos não consigo ver uma orquídea sofrendo sem tentar recuperá-la. Tudo o que aprendi está aqui, para você provar que também consegue.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:14px">
+          <a class="btn btn-gold" href="#pronto-socorro">Minha orquídea precisa de ajuda</a>
+          <a class="btn btn-light" href="/sobre/">Conheça o Arthur</a>
+        </div>
+      </div>
+      <div class="hero-art">
+        <div class="arch">
+          <div class="arch-img">
+            <img src="/img/arthur-doutor-orquidea.webp" width="1000" height="1000" alt="Gravura colorida de Arthur Lavieri de avental de jardineiro, segurando uma Cattleya magenta, cercado de orquídeas" fetchpriority="high" />
+          </div>
+          <div class="badge"><b>+10 anos</b><span>salvando orquídeas</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="wrap">
+        <div><b>+ de 31 mil</b><span>espécies de orquídeas no mundo</span></div>
+        <div><b>2.515</b><span>espécies aceitas no Brasil</span></div>
+        <div><b>1º culpado</b><span>de morte em casa: excesso de água</span></div>
+        <div><b>4 a 12 semanas</b><span>para uma orquídea sem raiz brotar de novo</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRONTO-SOCORRO -->
+  <section id="pronto-socorro">
+    <div class="garland">
+      <img src="/img/guirlanda.webp" width="1568" height="870" alt="" aria-hidden="true" loading="lazy" />
+      <div class="cap">
+        <p class="eyebrow" style="color: var(--magenta)">Pronto-socorro</p>
+        <h2>O que está acontecendo com a sua orquídea?</h2>
+        <p>Escolha o problema. Eu conto o que faço aqui em casa, passo a passo, com o que você já tem na cozinha.</p>
+      </div>
+    </div>
+    <div class="wrap" style="padding-bottom: 88px; display: flex; flex-direction: column; gap: 28px">
+      <div class="grid g5" id="pcards">
+        {guias.map((g, i) => (
+          <button class="pcard" type="button" data-n={g.data.n} aria-expanded={i === 0 ? 'true' : 'false'} aria-controls={`pd-${g.data.n}`} style={`background:${FUNDOS[i % 6]};--c:${CORES[i % 6]}`}>
+            <span class="row"><span class="num" style={`background:${CORES[i % 6]}`}>{g.data.n}</span><span class="tag" style={`background:${TAG_COR[g.data.tag]}`}>{g.data.tag}</span></span>
+            <span class="t">{g.data.curto}</span>
+            <span class="h">{g.data.hint}</span>
+          </button>
+        ))}
+      </div>
+      {guias.map((g, i) => (
+        <div class="pdetail" id={`pd-${g.data.n}`} hidden={i !== 0} style={`--c:${CORES[i % 6]}`}>
+          <div class="l">
+            <span style={`font-family:var(--serif);font-style:italic;font-size:20px;font-weight:700;color:${CORES[i % 6]}`}>Nº {g.data.n}</span>
+            <h3 style="font-size:40px">{g.data.curto}</h3>
+            <p style="font-size:17px;color:var(--texto)">{g.data.sinal}</p>
+          </div>
+          <div class="r">
+            <div class="box" style="background:#EAF5EE"><span class="k" style="color:#1F6B40">O que eu faço hoje</span><p style="font-size:18px">{g.data.hoje}</p></div>
+            <div class="box" style="background:#FFF4D6"><span class="k" style="color:#8A5A00">Quanto tempo leva</span><p style="font-size:18px">{g.data.prazo}</p></div>
+            <a class="btn btn-main" href={`/pronto-socorro/${g.id}/`} style="align-self:flex-start">Ler o guia completo</a>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- DIAGNÓSTICO -->
+  <section class="diag sec" id="diagnostico">
+    <div class="wrap">
+      <div class="stack" style="flex: 1 1 340px; min-width: 0">
+        <p class="eyebrow" style="color: var(--ouro)">Diagnóstico em 3 cliques</p>
+        <h2 class="h2">Não sabe o nome do problema? Me mostre onde dói.</h2>
+        <p style="font-size: 18px; color: #E7DDF7">Primeiro, onde você vê o problema. Depois, como ele está. No fim, eu digo por onde começar.</p>
+        <div class="floaters" aria-hidden="true">
+          <img src="/img/vanda.webp" width="130" height="130" alt="" style="border: 4px solid var(--ouro)" loading="lazy" />
+          <img src="/img/oncidium.webp" width="110" height="110" alt="" style="border: 4px solid var(--rosa); margin-top: 40px; animation-delay: 1.5s" loading="lazy" />
+        </div>
+      </div>
+      <div class="diag-card" id="diag" data-d={diagData}>
+        <div class="stack" style="gap: 12px">
+          <span class="step-k">1 · Onde está o problema?</span>
+          <div class="chips" id="areas">
+            {Object.entries(diag).map(([k, v]) => <button class="chip" type="button" data-area={k} aria-pressed="false">{v.label}</button>)}
+          </div>
+        </div>
+        <div class="stack" style="gap: 12px" id="step2" hidden>
+          <span class="step-k">2 · Como está?</span>
+          <div class="chips col" id="conds"></div>
+        </div>
+        <div class="result" id="step3" hidden>
+          <div class="stack" style="gap: 6px; flex: 1 1 300px; min-width: 0">
+            <span class="step-k" style="color: var(--magenta)">3 · Por onde começar</span>
+            <span id="r-t" style="font-family: var(--serif); font-size: 32px; font-weight: 700; line-height: 1.1"></span>
+            <span id="r-x" style="font-size: 17px; color: var(--texto)"></span>
+          </div>
+          <a class="btn btn-main" id="r-a" href="#">Abrir o guia</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GALERIA -->
+  <section class="gal" aria-label="Galeria de orquídeas">
+    <div class="track">
+      {[...galeria, ...galeria].map(([img, alt], i) => (
+        <figure style={`border-color:${CORES[i % 6]}`}><img src={`/img/${img}.webp`} alt={i < galeria.length ? alt : ''} loading="lazy" width="240" height="240" /></figure>
+      ))}
+    </div>
+  </section>
+
+  <!-- CUIDADOS -->
+  <section id="cuidados" class="sec">
+    <div class="wrap" style="display: flex; flex-direction: column; gap: 40px">
+      <div class="stack">
+        <p class="eyebrow" style="color: var(--verde)">Cuidados caseiros</p>
+        <h2 class="h2">Imite um galho de árvore e você acerta 80% das vezes</h2>
+        <p class="lead">Na natureza, a maioria das orquídeas vive presa ao tronco, com a raiz no vento. Em casa, ela morre afogada. Cinco cuidados resolvem quase tudo.</p>
+      </div>
+      <div class="grid g4">
+        {fatores.map((f) => (
+          <div class="card" style={`background:${f.bg}`}>
+            <span class="circle" style={`background:${f.c}`}>{f.n}</span>
+            <span class="ct">{f.t}</span>
+            <span style="font-size: 16px; color: #3E2A37">{f.x}</span>
+          </div>
+        ))}
+      </div>
+      <div class="stack" style="gap: 18px">
+        <h3 style="font-size: 38px; font-weight: 600">Mito ou verdade? <span style="color: var(--magenta)">Toque no cartão.</span></h3>
+        <div class="grid g3">
+          {mitos.map((m) => (
+            <button class="myth" type="button" aria-pressed="false" style={`--c:${m.c}`}>
+              <span class="front" style="display:flex;flex-direction:column;gap:12px;height:100%">
+                <span style="font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ouro-claro)">Dizem por aí</span>
+                <span class="claim">{m.claim}</span>
+                <span style="margin-top:auto;font-size:14px;font-weight:700;color:var(--ouro-claro)">Ver o veredito</span>
+              </span>
+              <span class="back">
+                <span class="verdict" style={`color:${m.vc}`}>{m.v}</span>
+                <span style="font-size:16px;color:#3E2A37">{m.why}</span>
+                <span style="margin-top:auto;font-size:13px;color:#6B4A5E">Fonte: {m.src}</span>
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DOENÇAS -->
+  <section id="doencas" class="sec" style="background: var(--verde-esc); color: #F3FAF5">
+    <div class="wrap" style="display: flex; flex-direction: column; gap: 36px">
+      <div class="stack">
+        <p class="eyebrow" style="color: var(--ouro-claro)">Doenças e pragas</p>
+        <h2 class="h2">Reconheça pelo sinal, antes que se espalhe</h2>
+        <p class="lead" style="color: #D3E8DA">Toda planta nova fica de quarentena, e a tesoura passa no álcool 70% entre uma planta e outra. Prevenir é mais fácil que curar.</p>
+      </div>
+      <div class="grid g3">
+        {pragas.map((d) => (
+          <div class="card" style={`background:#fff;color:var(--tinta);border-top:6px solid ${d.c}`}>
+            <span class="tag" style={`align-self:flex-start;background:${d.c}`}>{d.k}</span>
+            <span class="ct">{d.n}</span>
+            <span style="font-size:16px;color:var(--texto)"><strong style="color:var(--tinta)">Sinal:</strong> {d.s}</span>
+            <span style="font-size:16px;color:var(--texto)"><strong style="color:var(--tinta)">Eu faço:</strong> {d.a}</span>
+          </div>
+        ))}
+      </div>
+      <p style="font-size: 15px; color: #C2DCCB; max-width: 900px">Produtos químicos (fungicidas, bactericidas, inseticidas): consulte um engenheiro agrônomo e siga sempre o rótulo. Aqui eu só ensino o que é caseiro e de baixa toxicidade.</p>
+    </div>
+  </section>
+
+  <!-- TIPOS -->
+  <section id="tipos" class="sec">
+    <div class="wrap" style="display: flex; flex-direction: column; gap: 36px">
+      <div class="stack">
+        <p class="eyebrow" style="color: var(--magenta)">Os principais tipos</p>
+        <h2 class="h2">Cada orquídea tem seu jeito</h2>
+        <p class="lead">Antes de cuidar, descubra quem ela é. A de supermercado, a rainha do Brasil, a do filósofo chinês.</p>
+      </div>
+      <div class="grid g3" style="gap: 22px">
+        {tipos.map((t) => (
+          <div class="tipo" style={`--c:${t.c}`}>
+            <div class="im"><img src={`/img/${t.img}.webp`} alt={`Ilustração de ${t.n}`} loading="lazy" width="463" height="390" /></div>
+            <div class="tx"><span style={`font-family:var(--serif);font-size:30px;font-weight:700;color:${t.c}`}>{t.n}</span><span style="font-size:16px;color:var(--texto)">{t.x}</span></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- BRASIL -->
+  <section id="brasil" class="sec" style="background: var(--verde); color: #fff">
+    <div class="wrap" style="display: flex; flex-direction: column; gap: 40px">
+      <div class="stack">
+        <p class="eyebrow" style="color: var(--ouro-claro)">Orquídeas no Brasil</p>
+        <h2 class="h2" style="max-width: 820px">Moramos num dos países mais ricos em orquídeas do planeta</h2>
+      </div>
+      <div class="grid g4">
+        {[['2.515', 'espécies aceitas', '#A3196B'], ['1.540', 'só existem aqui: 2º lugar no mundo', '#5B2C8F'], ['1.398', 'na Mata Atlântica, mais da metade do total', '#1F6B40'], ['202', 'gêneros nativos, 23 exclusivos do Brasil', '#B86E00']].map(([n, t, c]) => (
+          <div style="background:#fff;color:var(--tinta);border-radius:20px;padding:26px;display:flex;flex-direction:column;gap:6px"><span style={`font-family:var(--serif);font-size:58px;font-weight:700;color:${c};line-height:1`}>{n}</span><span style="font-size:16px">{t}</span></div>
+        ))}
+      </div>
+      <div style="display: flex; flex-wrap: wrap; gap: 24px">
+        <div style="flex:1 1 360px;min-width:0;background:#FFF4D6;color:var(--tinta);border-radius:22px;padding:26px;display:flex;flex-wrap:wrap;gap:18px;align-items:center">
+          <img src="/img/cattleya.webp" alt="Ilustração de Cattleya magenta" width="120" height="120" style="object-fit:contain;flex:0 0 auto" loading="lazy" />
+          <div class="stack" style="gap:8px;min-width:0;flex:1 1 200px"><span style="font-family:var(--serif);font-size:30px;font-weight:700">Cattleya labiata, a rainha</span><span style="font-size:16px;color:var(--texto)">Nasce do Ceará ao Rio de Janeiro. Coletada no Nordeste em 1818, floresceu na Inglaterra em 1823 e acendeu a febre das orquídeas. Muita gente a chama de flor nacional, mas não é oficial.</span></div>
+        </div>
+        <div style="flex:1 1 360px;min-width:0;background:#fff;color:var(--tinta);border-radius:22px;padding:30px" class="stack">
+          <span style="font-family:var(--serif);font-size:30px;font-weight:700">Xaxim, nunca mais</span>
+          <span style="font-size:16px;color:var(--texto)">A samambaiaçu leva 20 anos para crescer meio metro e está ameaçada. A Resolução Conama 278/2001 proibiu sua exploração. Uso fibra de coco, casca de pinus e nó de pinho.</span>
+        </div>
+        <div style="flex:1 1 360px;min-width:0;background:var(--ouro);color:var(--ameixa);border-radius:22px;padding:30px" class="stack">
+          <span style="font-family:var(--serif);font-size:30px;font-weight:700">Orquídea se compra, não se arranca</span>
+          <span style="font-size:16px">Compre sempre de orquidário legalizado. Tirar orquídea da mata empobrece a floresta e alimenta o comércio ilegal.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLIMA -->
+  <section id="clima" class="sec" style="background: #E9F3FB">
+    <div class="wrap" style="display: flex; flex-direction: column; gap: 32px">
+      <div class="stack">
+        <p class="eyebrow" style="color: var(--azul)">O clima e as orquídeas</p>
+        <h2 class="h2">Calor, frio, umidade: o que o tempo faz com elas</h2>
+        <p class="lead" style="color: #2F4656">A mesma orquídea se comporta diferente no litoral e no planalto. Em breve, um calendário de cuidados para cada região do Brasil.</p>
+      </div>
+      <div class="grid g4">
+        <div style="background:#FFE3D3;border-radius:20px;padding:22px" class="stack"><span style="font-family:var(--serif);font-size:28px;font-weight:700;color:#9A3412">Calor</span><span style="font-size:16px;color:#3E2A20">A Phalaenopsis gosta de 24 °C a 29 °C de dia. Acima de 32 °C a 35 °C, sofre.</span></div>
+        <div style="background:#E6E0FA;border-radius:20px;padding:22px" class="stack"><span style="font-family:var(--serif);font-size:28px;font-weight:700;color:#4C2A85">Noites frescas</span><span style="font-size:16px;color:#2E2440">Algumas semanas de noites entre 13 °C e 18 °C, no outono, fazem a haste floral nascer.</span></div>
+        <div style="background:#D8F0E2;border-radius:20px;padding:22px" class="stack"><span style="font-family:var(--serif);font-size:28px;font-weight:700;color:#1F6B40">Umidade</span><span style="font-size:16px;color:#22382B">O ideal fica entre 40% e 80%, sempre com o ar circulando.</span></div>
+        <div style="background:#FFF1C2;border-radius:20px;padding:22px" class="stack"><span style="font-family:var(--serif);font-size:28px;font-weight:700;color:#7A5200">Inverno seco</span><span style="font-size:16px;color:#3A2E10">Cattleya e Dendrobium de cana mole descansam: menos água e nada de adubo.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HISTÓRIA -->
+  <section id="historia" class="sec">
+    <div class="wrap" style="display: flex; flex-direction: column; gap: 32px">
+      <div class="stack">
+        <p class="eyebrow" style="color: var(--magenta)">A história das orquídeas</p>
+        <h2 class="h2">De Confúcio a Darwin, uma flor que enlouqueceu o mundo</h2>
+      </div>
+      <div class="tl" id="tl">
+        {historia.map((e, i) => (
+          <button type="button" data-i={i} aria-pressed={i === historia.length - 1 ? 'true' : 'false'} style={`--c:${CORES[i % 6]}`}>
+            <span class="dot"></span><span class="w">{e.w}</span><span class="l">{e.l}</span>
+          </button>
+        ))}
+      </div>
+      {historia.map((e, i) => (
+        <div class="ev" data-ev={i} hidden={i !== historia.length - 1} style={`background:${evBg[i]}`}>
+          <span class="big" style={`color:${CORES[i % 6]}`}>{e.w}</span>
+          <div class="stack" style="flex:1 1 420px;min-width:0;gap:8px"><span style="font-family:var(--serif);font-size:34px;font-weight:700">{e.l}</span><span style="font-size:18px;color:#3E2A37">{e.x}</span></div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- MUNDO -->
+  <section id="mundo" class="sec" style="background: #FDEBF4">
+    <div class="wrap" style="display: flex; flex-direction: column; gap: 28px">
+      <div class="stack">
+        <p class="eyebrow" style="color: var(--magenta)">Pelo mundo</p>
+        <h2 class="h2">Onde as orquídeas reinam</h2>
+      </div>
+      <div class="grid g3">
+        {mundo.map((w) => (
+          <div class="card" style={`background:#fff;border-bottom:6px solid ${w.c}`}>
+            <span class="ct" style={`color:${w.c}`}>{w.p}</span>
+            <span style="font-size:16px;color:var(--texto)">{w.x}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ARTHUR -->
+  <section id="arthur" class="sec" style="background: var(--magenta); color: #FFF8F2">
+    <div class="wrap" style="display: flex; flex-wrap: wrap; gap: 48px; align-items: center">
+      <div style="flex:1 1 420px;min-width:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px">
+        <img src="/img/jardim-phalaenopsis-magenta.webp" alt="Phalaenopsis magenta florida no tronco de uma árvore, no jardim do Arthur" loading="lazy" style="width:100%;height:430px;object-fit:cover;border-radius:200px 200px 20px 20px;display:block;border:5px solid var(--ouro)" />
+        <img src="/img/jardim-phalaenopsis-rosa.webp" alt="Phalaenopsis rosa de flores pequenas presa a um tronco, no jardim do Arthur" loading="lazy" style="width:100%;height:430px;object-fit:cover;border-radius:20px 20px 200px 200px;display:block;margin-top:52px;border:5px solid #FFF8F2" />
+      </div>
+      <div class="stack" style="flex:1 1 480px;min-width:0;gap:18px">
+        <p class="eyebrow" style="color: var(--ouro-claro)">Quem é Arthur</p>
+        <h2 class="h2">Não sou botânico. Sou teimoso.</h2>
+        <p style="font-size:19px;color:#FCE3EF">Nasci em São Paulo e escolhi Santos para viver. Trabalhei 37 anos na mesma empresa e, há mais de 10 anos, descobri que não consigo ver uma orquídea sofrendo sem tentar salvá-la. Aprendi sozinho: errando, lendo e observando.</p>
+        <p style="font-size:19px;color:#FCE3EF">Estas são algumas das minhas. Vivem presas às árvores do jardim, do jeito que a natureza ensinou.</p>
+        <p style="font-family:var(--serif);font-style:italic;font-size:26px;color:var(--ouro-claro)">Doutor Orquídea é apelido, não diploma.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:14px">
+          <a class="btn btn-fb" href={SITE.facebook} target="_blank" rel="noopener">
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M14 8h3V4h-3c-2.8 0-4.5 1.8-4.5 4.6V11H7v4h2.5v9h4v-9h3l.5-4h-3.5V8.8c0-.5.3-.8.5-.8z" /></svg>
+            Fale comigo no Facebook
+          </a>
+          <a class="btn btn-gold" href="/contato/">Mande uma mensagem</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Pronto-socorro: abre o resumo do problema escolhido
+    const cards = document.querySelectorAll<HTMLButtonElement>('#pcards .pcard');
+    cards.forEach((c) => c.addEventListener('click', () => {
+      const n = c.dataset.n;
+      const already = c.getAttribute('aria-expanded') === 'true';
+      cards.forEach((o) => o.setAttribute('aria-expanded', 'false'));
+      document.querySelectorAll<HTMLElement>('.pdetail').forEach((d) => (d.hidden = true));
+      if (!already) {
+        c.setAttribute('aria-expanded', 'true');
+        const d = document.getElementById(`pd-${n}`);
+        if (d) { d.hidden = false; d.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+      }
+    }));
+
+    // Diagnóstico em 3 cliques
+    const box = document.getElementById('diag') as HTMLElement;
+    const { diag, slugByN, tituloByN } = JSON.parse(box.dataset.d || '{}');
+    const areas = box.querySelectorAll<HTMLButtonElement>('[data-area]');
+    const s2 = document.getElementById('step2') as HTMLElement;
+    const s3 = document.getElementById('step3') as HTMLElement;
+    const conds = document.getElementById('conds') as HTMLElement;
+    areas.forEach((a) => a.addEventListener('click', () => {
+      areas.forEach((o) => o.setAttribute('aria-pressed', 'false'));
+      a.setAttribute('aria-pressed', 'true');
+      conds.innerHTML = '';
+      s3.hidden = true;
+      (diag[a.dataset.area!].conds as [string, number, string][]).forEach(([label, n, first]) => {
+        const b = document.createElement('button');
+        b.type = 'button'; b.className = 'chip'; b.textContent = label;
+        b.style.setProperty('--cc', '#A3196B');
+        b.setAttribute('aria-pressed', 'false');
+        b.addEventListener('click', () => {
+          conds.querySelectorAll('button').forEach((o) => o.setAttribute('aria-pressed', 'false'));
+          b.setAttribute('aria-pressed', 'true');
+          (document.getElementById('r-t') as HTMLElement).textContent = `Nº ${n} · ${tituloByN[n]}`;
+          (document.getElementById('r-x') as HTMLElement).textContent = first;
+          (document.getElementById('r-a') as HTMLAnchorElement).href = `/pronto-socorro/${slugByN[n]}/`;
+          s3.hidden = false;
+        });
+        conds.appendChild(b);
+      });
+      s2.hidden = false;
+    }));
+
+    // Mito ou verdade
+    document.querySelectorAll<HTMLButtonElement>('.myth').forEach((m) => m.addEventListener('click', () => {
+      m.setAttribute('aria-pressed', String(m.getAttribute('aria-pressed') !== 'true'));
+    }));
+
+    // Linha do tempo
+    const tl = document.querySelectorAll<HTMLButtonElement>('#tl button');
+    tl.forEach((b) => b.addEventListener('click', () => {
+      tl.forEach((o) => o.setAttribute('aria-pressed', 'false'));
+      b.setAttribute('aria-pressed', 'true');
+      document.querySelectorAll<HTMLElement>('[data-ev]').forEach((e) => (e.hidden = e.dataset.ev !== b.dataset.i));
+    }));
+  </script>
+</Base>

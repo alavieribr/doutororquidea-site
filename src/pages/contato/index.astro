@@ -1,0 +1,38 @@
+---
+import Base from '../../layouts/Base.astro';
+import { SITE } from '../../data/site';
+---
+<Base title="Contato" description="Fale com Arthur Lavieri, o Doutor Orquídea, pelo formulário, por e-mail ou pelo Facebook.">
+  <section class="page-head">
+    <div class="wrap">
+      <span class="crumb"><a href="/">Início</a> · Contato</span>
+      <h1>Fale com o Arthur</h1>
+      <p>Mande sua dúvida, uma foto da sua orquídea pelo Facebook ou conte como foi a recuperação. Respondo quando puder.</p>
+    </div>
+  </section>
+  <section class="sec" style="padding-top: 56px">
+    <div class="wrap" style="display:flex;flex-wrap:wrap;gap:48px">
+      <form class="form" style="flex:2 1 420px" action={`https://formsubmit.co/${SITE.email}`} method="POST">
+        <input type="hidden" name="_subject" value="Mensagem pelo site Doutor Orquídea" />
+        <input type="hidden" name="_next" value="https://doutororquidea.com/contato/obrigado/" />
+        <input type="hidden" name="_template" value="table" />
+        <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
+        <label>Seu nome<input type="text" name="nome" required autocomplete="name" /></label>
+        <label>Seu e-mail<input type="email" name="email" required autocomplete="email" /></label>
+        <label>Mensagem<textarea name="mensagem" rows="6" required></textarea></label>
+        <button class="btn btn-main" type="submit" style="align-self:flex-start">Enviar mensagem</button>
+      </form>
+      <div class="stack" style="flex:1 1 280px;gap:18px">
+        <div class="card" style="background:#E4F0FA">
+          <span class="ct" style="color:#1877F2">Facebook</span>
+          <span>O jeito mais rápido de falar comigo e de mandar fotos da sua orquídea.</span>
+          <a class="btn btn-fb" href={SITE.facebook} target="_blank" rel="noopener" style="align-self:flex-start">Arthur Lavieri no Facebook</a>
+        </div>
+        <div class="card" style="background:#FDEBF4">
+          <span class="ct" style="color:var(--magenta)">E-mail</span>
+          <a href={`mailto:${SITE.email}`} style="font-size:18px;font-weight:700">{SITE.email}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>

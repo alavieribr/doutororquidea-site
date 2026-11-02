@@ -1,0 +1,66 @@
+---
+import Base from '../layouts/Base.astro';
+const grupos: [string, [string, string][]][] = [
+  ['Cuidados e recuperação', [
+    ['American Orchid Society. Phalaenopsis Culture Sheet', 'https://www.aos.org/orchid-care/care-sheets/phalaenopsis-culture-sheet'],
+    ['American Orchid Society. Fertilize Weakly Weekly', 'https://www.aos.org/orchids/articles/fertilize-weakly-weekly'],
+    ['American Orchid Society. Growing Phalaenopsis: What Can Go Wrong?', 'https://www.aos.org/orchids/articles/growing-phalaenopsis.-what-can-go-wrong'],
+    ['American Orchid Society. Bulb, Stem and Root Rots', 'https://www.aos.org/orchid-care/orchid-pests-and-diseases/bulb-stem-and-root-rots'],
+    ['Kew. How to look after your orchids', 'https://www.kew.org/read-and-watch/orchid-care-expert-tips'],
+    ['Iowa State University Extension. Growing Moth Orchids at Home', 'https://www.extension.iastate.edu/news/yard-and-garden-growing-moth-orchids-home'],
+    ['Sistema FAEP/Senar-PR. Cultivo de Orquídeas', 'https://www.sistemafaep.org.br/wp-content/uploads/2026/01/PR.0397-Cultivo-de-Orquideas_web.pdf'],
+    ['Epamig / Governo de MG. Dicas para o cultivo de orquídeas, 2022', 'https://www.mg.gov.br/agricultura/noticias/epamig-da-dicas-para-o-cultivo-de-orquideas'],
+    ['Gardening Australia (ABC). Orchid Revival, 2020', 'https://www.abc.net.au/gardening/how-to/orchid-revival/12096898'],
+    ['Orchid Care Zone. The Sphag and Bag Method', 'https://www.orchidcarezone.com/sphag-and-bag-method/'],
+    ['The Spruce. Methods to Save a Rootless Orchid, 2024', 'https://www.thespruce.com/methods-to-save-a-rootless-orchid-8663628'],
+    ['Dermer, M. L. Saving Phalaenopsis Orchids with Drooping Leaves', 'https://marshall.dermer.com/orchids/'],
+  ]],
+  ['Pragas, doenças e mitos', [
+    ['American Orchid Society. Mealybugs', 'https://www.aos.org/orchid-care/orchid-pests-and-diseases/mealybugs'],
+    ['American Orchid Society. Scale', 'https://www.aos.org/orchid-care/orchid-pests-and-diseases/scale'],
+    ['American Orchid Society. Neem Oil', 'https://www.aos.org/orchid-care/orchid-pests-and-diseases/neem-oil'],
+    ['University of Florida IFAS. Orchid Insect and Mite Pests, 2024', 'https://ask.ifas.ufl.edu/publication/IN1433'],
+    ['Cymbidium Orchid Society of Victoria. Orchid Viruses', 'https://www.cosv.com.au/orchid-viruses'],
+    ['Missouri Botanical Garden. Orchids: Problems', 'https://www.missouribotanicalgarden.org/Portals/0/Gardening/Gardening%20Help/Factsheets/Orchid%20Problems34.pdf'],
+    ['South, K. A. et al. Ice Cube Irrigation of Potted Phalaenopsis. HortScience, 2017', 'https://doi.org/10.21273/hortsci12212-17'],
+    ['UC Marin Master Gardeners. Garden tips from the Internet, 2024', 'https://ucanr.edu/site/uc-marin-master-gardeners/article/garden-tips-internet-fact-or-fiction'],
+  ]],
+  ['Brasil, história e mundo', [
+    ['Pessoa, E. et al. An Overview of Orchidaceae from Brazil. Plants, 2025', 'https://doi.org/10.3390/plants14223520'],
+    ['Freudenstein, J. V. Orchid phylogenetics and evolution. Annals of Botany, 2024', 'https://doi.org/10.1093/aob/mcae202'],
+    ['CNCFlora/JBRJ. Cattleya labiata Lindl.', 'https://proflora.jbrj.gov.br/html/Cattleya%20labiata_2012.html'],
+    ['Fairchild Tropical Botanic Garden. The History of Orchids', 'https://fairchildgarden.org/visit/history-of-orchids/'],
+    ['Kew. Orchidelirium', 'https://www.kew.org/read-and-watch/orchidelirium'],
+    ['Kew. Darwin’s orchid', 'https://www.kew.org/plants/darwins-orchid'],
+    ['Linnean Society. Edmond Albius, 2019', 'https://www.linnean.org/news/2019/10/16/edmond-albius'],
+    ['Karremans, A. P. Historical Review of the Artificial Pollination of Vanilla. Plants, 2024', 'https://doi.org/10.3390/plants13223203'],
+    ['National Heritage Board Singapura. National Flower', 'https://www.nhb.gov.sg/what-we-do/our-work/community-engagement/education/resources/national-symbols/national-flower'],
+    ['Longwood Gardens. Orchids as Emblems of National Pride', 'https://longwoodgardens.org/blog/2022-09-21/orchids-emblems-national-pride'],
+    ['SEMIL-SP. Xaxim', 'https://semil.sp.gov.br/educacaoambiental/prateleira-ambiental/xaxim/'],
+  ]],
+];
+---
+<Base title="Fontes e créditos" description="Fontes técnicas e créditos das imagens do site Doutor Orquídea.">
+  <section class="page-head">
+    <div class="wrap">
+      <span class="crumb"><a href="/">Início</a> · Fontes e créditos</span>
+      <h1>Fontes e créditos</h1>
+      <p>Eu aprendi sozinho, mas confiro o que escrevo. Estas são as fontes técnicas usadas no site.</p>
+    </div>
+  </section>
+  <article class="prose">
+    {grupos.map(([t, itens]) => (
+      <>
+        <h2>{t}</h2>
+        <ul>{itens.map(([n, u]) => <li><a href={u} target="_blank" rel="noopener">{n}</a></li>)}</ul>
+      </>
+    ))}
+    <h2>Imagens</h2>
+    <ul>
+      <li>Gravura de Arthur Lavieri, friso de orquídeas e ilustrações dos gêneros: geradas com inteligência artificial (Leonardo.ai, modelo GPT Image 2.5), em novembro de 2026. A gravura foi feita a partir de uma foto do Arthur, com a autorização dele.</li>
+      <li>Fotos das Phalaenopsis presas às árvores: jardim do Arthur, fotos da família.</li>
+    </ul>
+    <h2>Combinado</h2>
+    <p>Usos medicinais de orquídeas aparecem aqui só como história e cultura, nunca como recomendação de consumo. Para produtos químicos, consulte um engenheiro agrônomo e leia o rótulo. Nunca retire orquídeas da natureza.</p>
+  </article>
+</Base>

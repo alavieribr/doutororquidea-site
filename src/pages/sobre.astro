@@ -1,0 +1,32 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE } from '../data/site';
+---
+<Base title="Sobre o Arthur" description="Arthur Lavieri, o Doutor Orquídea: santista por opção, autodidata, há mais de 10 anos recuperando orquídeas que pareciam perdidas.">
+  <section class="page-head">
+    <div class="wrap">
+      <span class="crumb"><a href="/">Início</a> · Sobre o Arthur</span>
+      <h1>Não sou botânico. Sou teimoso.</h1>
+      <p>Arthur Lavieri, o Doutor Orquídea.</p>
+    </div>
+  </section>
+  <section class="sec" style="padding-top: 56px">
+    <div class="wrap" style="display:flex;flex-wrap:wrap;gap:48px;align-items:flex-start">
+      <img src="/img/arthur-doutor-orquidea.webp" alt="Gravura colorida de Arthur Lavieri com uma Cattleya nas mãos" width="1000" height="1000" style="flex:1 1 360px;min-width:0;max-width:520px;border-radius:260px 260px 22px 22px;border:6px solid var(--ouro)" />
+      <div class="prose" style="flex:1 1 420px;padding:0;margin:0">
+        <p>Nasci em São Paulo e escolhi Santos para viver. Trabalhei 37 anos na mesma empresa e, há mais de 10 anos, descobri que não consigo ver uma orquídea sofrendo sem tentar salvá-la.</p>
+        <p>Aprendi sozinho: errando, lendo e observando. Muita orquídea que chegou aqui dada como morta voltou a florir. Outras não voltaram, e com elas aprendi ainda mais.</p>
+        <p>Este site existe para mostrar que qualquer pessoa pode salvar uma orquídea com cuidados simples, feitos em casa. Tudo o que escrevo aqui foi conferido em fontes técnicas, que estão listadas no fim de cada página.</p>
+        <p style="font-family:var(--serif);font-style:italic;font-size:26px;color:var(--magenta)">Doutor Orquídea é apelido, não diploma.</p>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:24px 0">
+          <img src="/img/jardim-phalaenopsis-magenta.webp" alt="Phalaenopsis magenta no jardim do Arthur" loading="lazy" style="width:100%;height:300px;object-fit:cover;border-radius:18px" />
+          <img src="/img/jardim-phalaenopsis-rosa.webp" alt="Phalaenopsis rosa no jardim do Arthur" loading="lazy" style="width:100%;height:300px;object-fit:cover;border-radius:18px" />
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:14px">
+          <a class="btn btn-fb" href={SITE.facebook} target="_blank" rel="noopener">Fale comigo no Facebook</a>
+          <a class="btn btn-main" href="/contato/">Mande uma mensagem</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>

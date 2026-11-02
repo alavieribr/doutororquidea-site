@@ -1,0 +1,94 @@
+---
+import '../styles/global.css';
+import { SITE } from '../data/site';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+}
+const { title, description = SITE.descricao, image = '/img/og.jpg' } = Astro.props;
+const canonical = new URL(Astro.url.pathname, SITE.url).href;
+const fullTitle = title === SITE.nome ? `${SITE.nome} · Arthur Lavieri` : `${title} · ${SITE.nome}`;
+const ogImage = new URL(image, SITE.url).href;
+---
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{fullTitle}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonical} />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="pt_BR" />
+  <meta property="og:site_name" content={SITE.nome} />
+  <meta property="og:title" content={fullTitle} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={canonical} />
+  <meta property="og:image" content={ogImage} />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="theme-color" content="#5E1046" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600;1,700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet" />
+  <slot name="head" />
+</head>
+<body>
+  <header class="top">
+    <nav class="wrap" aria-label="Menu principal">
+      <a class="logo" href="/">
+        <img src="/favicon.svg" width="44" height="44" alt="" />
+        <span><b>Doutor <span>Orquídea</span></b><small>por Arthur Lavieri</small></span>
+      </a>
+      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="links">Menu</button>
+      <div class="links" id="links">
+        <a class="nl" href="/#cuidados">Cuidados</a>
+        <a class="nl" href="/#doencas">Doenças e pragas</a>
+        <a class="nl" href="/#tipos">Tipos</a>
+        <a class="nl" href="/#brasil">Brasil</a>
+        <a class="nl" href="/#historia">História</a>
+        <a class="nl" href="/sobre/">Sobre o Arthur</a>
+        <a class="nl" href="/contato/">Contato</a>
+        <a class="btn btn-main" href="/pronto-socorro/">Pronto-socorro</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <slot />
+  </main>
+
+  <footer class="ft">
+    <div class="wrap">
+      <div class="col">
+        <span style="font-family: var(--serif); font-weight: 700; font-size: 32px; color: #FFF8F2">Doutor <span style="color: var(--rosa)">Orquídea</span></span>
+        <span>Textos de Arthur Lavieri, com apoio de pesquisa em fontes técnicas listadas em cada página: American Orchid Society, Kew, Epamig, FAEP/Senar, Flora e Funga do Brasil. Ilustrações geradas com IA a partir de fotos do Arthur.</span>
+      </div>
+      <div class="col">
+        <span class="k">Combinado entre nós</span>
+        <span>Nunca retire orquídeas da natureza. Compre de orquidário legalizado. Xaxim é proibido (Resolução Conama 278/2001). Produto químico, só com orientação de engenheiro agrônomo e leitura do rótulo.</span>
+      </div>
+      <div class="col" style="flex: 0 1 240px">
+        <span class="k">Fale com o Arthur</span>
+        <a href={SITE.facebook} target="_blank" rel="noopener">Facebook: Arthur Lavieri</a>
+        <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+        <a href="/contato/">Formulário de contato</a>
+        <a href="/fontes/">Fontes e créditos</a>
+      </div>
+    </div>
+    <div class="copy">© {new Date().getFullYear()} Arthur Lavieri · Doutor Orquídea. Conteúdo informativo, feito por um amador apaixonado.</div>
+  </footer>
+
+  <script>
+    const b = document.querySelector('.menu-btn');
+    const l = document.getElementById('links');
+    b?.addEventListener('click', () => {
+      const open = l!.classList.toggle('open');
+      b.setAttribute('aria-expanded', String(open));
+    });
+    l?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => l.classList.remove('open')));
+  </script>
+</body>
+</html>

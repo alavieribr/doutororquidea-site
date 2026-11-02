@@ -1,0 +1,26 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { CORES, FUNDOS, TAG_COR } from '../../data/site';
+const guias = (await getCollection('guias')).sort((a, b) => a.data.n - b.data.n);
+---
+<Base title="Pronto-socorro" description="Os 10 problemas mais comuns das orquídeas e como resolver em casa: raiz podre, folhas moles, mofo, miolo preto, cochonilha, botões caindo e mais.">
+  <section class="page-head">
+    <div class="wrap">
+      <span class="crumb"><a href="/">Início</a> · Pronto-socorro</span>
+      <h1>Pronto-socorro das orquídeas</h1>
+      <p>Os 10 problemas que mais aparecem e o que eu faço em casa para resolver cada um. Escolha o que parece com a sua planta.</p>
+    </div>
+  </section>
+  <section class="sec" style="padding-top: 48px">
+    <div class="wrap grid g5">
+      {guias.map((g, i) => (
+        <a class="pcard" href={`/pronto-socorro/${g.id}/`} style={`background:${FUNDOS[i % 6]};--c:${CORES[i % 6]}`}>
+          <span class="row"><span class="num" style={`background:${CORES[i % 6]}`}>{g.data.n}</span><span class="tag" style={`background:${TAG_COR[g.data.tag]}`}>{g.data.tag}</span></span>
+          <span class="t">{g.data.curto}</span>
+          <span class="h">{g.data.hint}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+</Base>

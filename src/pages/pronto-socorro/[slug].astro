@@ -1,0 +1,50 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection, render } from 'astro:content';
+import { CORES, TAG_COR, SITE } from '../../data/site';
+
+export async function getStaticPaths() {
+  const guias = (await getCollection('guias')).sort((a, b) => a.data.n - b.data.n);
+  return guias.map((g, i) => ({
+    params: { slug: g.id },
+    props: { guia: g, ant: guias[i - 1] ?? null, prox: guias[i + 1] ?? null },
+  }));
+}
+const { guia, ant, prox } = Astro.props;
+const { Content } = await render(guia);
+const cor = CORES[(guia.data.n - 1) % 6];
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org', '@type': 'Article', headline: guia.data.title, description: guia.data.description,
+  inLanguage: 'pt-BR', author: { '@type': 'Person', name: 'Arthur Lavieri', sameAs: [SITE.facebook] },
+  mainEntityOfPage: new URL(`/pronto-socorro/${guia.id}/`, SITE.url).href,
+});
+---
+<Base title={guia.data.title} description={guia.data.description}>
+  <script slot="head" type="application/ld+json" set:html={jsonLd} />
+  <section class="page-head" style={`background:${cor}`}>
+    <div class="wrap">
+      <span class="crumb"><a href="/">Início</a> · <a href="/pronto-socorro/">Pronto-socorro</a> · Nº {guia.data.n}</span>
+      <span class="tag" style={`background:${TAG_COR[guia.data.tag]};display:inline-block;margin-bottom:14px`}>{guia.data.tag}</span>
+      <h1>{guia.data.title}</h1>
+      <p>{guia.data.sinal}</p>
+    </div>
+  </section>
+  <article class="prose">
+    <div class="resumo">
+      <div class="box" style="background:#EAF5EE"><span class="k" style="color:#1F6B40">O que eu faço hoje</span><span>{guia.data.hoje}</span></div>
+      <div class="box" style="background:#FFF4D6"><span class="k" style="color:#8A5A00">Quanto tempo leva</span><span>{guia.data.prazo}</span></div>
+    </div>
+    <Content />
+    <section class="fontes">
+      <h2>Fontes</h2>
+      <ul>
+        {guia.data.fontes.map(([t, u]) => <li><a href={u} target="_blank" rel="noopener">{t}</a></li>)}
+      </ul>
+      <p style="font-size:14px;color:#6B4A5E">Para fungicidas, bactericidas e inseticidas químicos, consulte um engenheiro agrônomo e siga o rótulo. Este site não indica produto comercial nem dose.</p>
+    </section>
+    <nav class="nav-guias" aria-label="Outros guias">
+      {ant ? <a class="btn btn-light" style="color:var(--magenta);border-color:var(--magenta)" href={`/pronto-socorro/${ant.id}/`}>← {ant.data.curto}</a> : <span></span>}
+      {prox ? <a class="btn btn-main" href={`/pronto-socorro/${prox.id}/`}>{prox.data.curto} →</a> : <a class="btn btn-main" href="/pronto-socorro/">Todos os problemas</a>}
+    </nav>
+  </article>
+</Base>
